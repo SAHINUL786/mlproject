@@ -1,13 +1,13 @@
 from typing import List
 from setuptools import find_packages,setup
-HYPEN_e_DOT = '-e .'
+HYPEN_E_DOT = '-e .'
 def get_requirements(filepath:str)->list:
     requirements = []
     with open (filepath) as file_obj:
        requirements =  file_obj.readlines()
        requirements = [req.replace("\n","") for req in requirements]
-    if HYPEN_e_DOT in requirements:
-        requirements.remove(HYPEN_e_DOT)
+    if HYPEN_E_DOT in requirements:
+        requirements.remove(HYPEN_E_DOT)
     return requirements
     
 
