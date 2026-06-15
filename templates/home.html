@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Exam Performance Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:     #0F172A;
+      --slate:    #1E293B;
+      --card:     #162032;
+      --border:   #2D3F55;
+      --blue:     #3B82F6;
+      --blue-glow:#60A5FA;
+      --green:    #10B981;
+      --muted:    #64748B;
+      --light:    #94A3B8;
+      --white:    #F8FAFC;
+      --radius:   14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--blue), #8B5CF6);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px; font-weight: 600; letter-spacing: -0.3px;
+    }
+    .logo-text span { color: var(--blue-glow); }
+    .header-badge {
+      margin-left: auto;
+      font-size: 11px; font-weight: 500;
+      color: var(--green);
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      padding: 4px 10px; border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 52px 20px 36px;
+    }
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 500; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--blue-glow);
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 700; line-height: 1.12;
+      letter-spacing: -1px; color: var(--white);
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, var(--blue), #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      margin-top: 14px;
+      color: var(--light); font-size: 15px; font-weight: 300;
+      max-width: 480px; margin-inline: auto; line-height: 1.6;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+      width: 100%;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: var(--light); letter-spacing: 0.2px;
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px; height: 16px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+
+    /* ── FORM ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 12px; font-weight: 500;
+      color: var(--light); letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      background: var(--slate);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 11px 14px;
+      appearance: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    select:focus, input[type="number"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
+    }
+    select option { background: var(--slate); }
+    input[type="number"]::-webkit-inner-spin-button { opacity: 0.4; }
+
+    .score-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .score-hint {
+      font-size: 11px; color: var(--muted); margin-top: 4px;
+    }
+
+    /* ── SUBMIT ── */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--blue) 0%, #6366F1 100%);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 600;
+      border: none; border-radius: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.2px;
+    }
+    .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .submit-btn:active { transform: translateY(0); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Score gauge */
+    .gauge-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .gauge-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+    }
+    .gauge-wrap {
+      position: relative;
+      width: 160px; height: 160px;
+      margin: 0 auto 18px;
+    }
+    .gauge-svg { width: 160px; height: 160px; transform: rotate(-90deg); }
+    .gauge-track {
+      fill: none; stroke: var(--border); stroke-width: 10;
+      stroke-dasharray: 440; stroke-dashoffset: 0;
+    }
+    .gauge-fill {
+      fill: none;
+      stroke: url(#gaugeGrad);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .gauge-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .gauge-score {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 38px; font-weight: 700;
+      color: var(--white); line-height: 1;
+    }
+    .gauge-score.placeholder { font-size: 22px; color: var(--muted); font-weight: 400; }
+    .gauge-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .grade-badge {
+      display: inline-block;
+      padding: 5px 16px; border-radius: 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #818CF8;
+    }
+
+    /* Info card */
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+    }
+    .info-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: var(--light); margin-bottom: 14px;
+    }
+    .info-row {
+      display: flex; justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(45,63,85,0.6);
+      font-size: 13px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-key { color: var(--muted); }
+    .info-val { color: var(--white); font-weight: 500; text-align: right; max-width: 160px; word-break: break-word; }
+    .info-val.empty { color: var(--border); font-style: italic; font-weight: 300; }
+
+    /* tip */
+    .tip-card {
+      background: rgba(59,130,246,0.07);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      font-size: 12.5px; color: var(--light); line-height: 1.6;
+    }
+    .tip-card strong { color: var(--blue-glow); }
+
+    /* alert */
+    .result-alert {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-size: 15px; font-weight: 500;
+      display: none;
+    }
+    .result-alert.show { display: block; }
+    .result-alert.success {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #34D399;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .form-row, .score-inputs { grid-template-columns: 1fr; }
+      header { padding: 16px 20px; }
+      .card { padding: 22px 18px; }
+      .hero { padding: 36px 16px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .gauge-fill { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-icon">📊</div>
+    <div class="logo-text">Exam<span>IQ</span></div>
+    <div class="header-badge">● ML Powered</div>
+  </header>
+
+  <div class="hero">
+    <p class="hero-eyebrow">Predictive Analytics · Student Performance</p>
+    <h1>Predict Your <em>Math Score</em><br>Before the Exam</h1>
+    <p class="hero-sub">Fill in the details below and our trained model will estimate your mathematics score based on your profile.</p>
+  </div>
+
+  <div class="container">
+    <div class="grid">
+
+      <!-- ── FORM CARD ── -->
+      <div class="card">
+        <p class="card-title">Student Profile</p>
+
+        <form action="{{ url_for('predict_datapoint') }}" method="post" id="predForm">
+
+          <div class="form-row">
+            <div class="field">
+              <label for="gender">Gender</label>
+              <select name="gender" id="gender" required onchange="updatePreview()">
+                <option disabled selected value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="race_ethnicity">Race / Ethnicity</label>
+              <select name="race_ethnicity" id="race_ethnicity" required onchange="updatePreview()">
+                <option disabled selected value="">Select group</option>
+                <option value="group A">Group A</option>
+                <option value="group B">Group B</option>
+                <option value="group C">Group C</option>
+                <option value="group D">Group D</option>
+                <option value="group E">Group E</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="parental_level_of_education">Parental Level of Education</label>
+            <select name="parental_level_of_education" id="parental_level_of_education" required onchange="updatePreview()">
+              <option disabled selected value="">Select education level</option>
+              <option value="some high school">Some High School</option>
+              <option value="high school">High School</option>
+              <option value="some college">Some College</option>
+              <option value="associate's degree">Associate's Degree</option>
+              <option value="bachelor's degree">Bachelor's Degree</option>
+              <option value="master's degree">Master's Degree</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="lunch">Lunch Type</label>
+              <select name="lunch" id="lunch" required onchange="updatePreview()">
+                <option disabled selected value="">Select type</option>
+                <option value="standard">Standard</option>
+                <option value="free/reduced">Free / Reduced</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="test_preparation_course">Test Prep Course</label>
+              <select name="test_preparation_course" id="test_preparation_course" required onchange="updatePreview()">
+                <option disabled selected value="">Select status</option>
+                <option value="none">Not Taken</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="score-inputs">
+            <div class="field">
+              <label for="reading_score">Reading Score</label>
+              <input type="number" name="reading_score" id="reading_score"
+                     min="0" max="100" placeholder="0 – 100" onchange="updatePreview()" />
+              <p class="score-hint">Out of 100</p>
+            </div>
+            <div class="field">
+              <label for="writing_score">Writing Score</label>
+              <input type="number" name="writing_score" id="writing_score"
+                     min="0" max="100" placeholder="0 – 100" onchange="updatePreview()" />
+              <p class="score-hint">Out of 100</p>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">⚡ Predict Math Score</button>
+
+          <!-- Result block (shown when Flask injects {{results}}) -->
+          {% if results is defined and results != '' and results != None %}
+          <div class="result-alert success show">
+            🎯 Predicted Mathematics Score: <strong>{{ results | round(1) }}</strong> / 100
+          </div>
+          {% endif %}
+
+        </form>
+      </div>
+
+      <!-- ── SIDEBAR ── -->
+      <div class="sidebar">
+
+        <!-- Gauge -->
+        <div class="gauge-card">
+          <p class="gauge-label">Predicted Math Score</p>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 160 160">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#3B82F6"/>
+                  <stop offset="100%" style="stop-color:#8B5CF6"/>
+                </linearGradient>
+              </defs>
+              <circle class="gauge-track" cx="80" cy="80" r="70"/>
+              <circle class="gauge-fill" id="gaugeFill" cx="80" cy="80" r="70"/>
+            </svg>
+            <div class="gauge-center">
+              {% if results is defined and results != '' and results != None %}
+                <div class="gauge-score" id="gaugeNum">{{ results | round(1) }}</div>
+                <div class="gauge-sub">out of 100</div>
+              {% else %}
+                <div class="gauge-score placeholder" id="gaugeNum">—</div>
+                <div class="gauge-sub">awaiting input</div>
+              {% endif %}
+            </div>
+          </div>
+          <span class="grade-badge" id="gradeBadge">
+            {% if results is defined and results != '' and results != None %}
+              {% set r = results | float %}
+              {% if r >= 90 %}A+{% elif r >= 80 %}A{% elif r >= 70 %}B{% elif r >= 60 %}C{% elif r >= 50 %}D{% else %}Needs Work{% endif %}
+            {% else %}
+              Submit to see grade
+            {% endif %}
+          </span>
+        </div>
+
+        <!-- Live profile preview -->
+        <div class="info-card">
+          <p class="info-title">📋 Your Profile Preview</p>
+          <div class="info-row"><span class="info-key">Gender</span><span class="info-val empty" id="prev-gender">—</span></div>
+          <div class="info-row"><span class="info-key">Ethnicity</span><span class="info-val empty" id="prev-race">—</span></div>
+          <div class="info-row"><span class="info-key">Parent Education</span><span class="info-val empty" id="prev-edu">—</span></div>
+          <div class="info-row"><span class="info-key">Lunch</span><span class="info-val empty" id="prev-lunch">—</span></div>
+          <div class="info-row"><span class="info-key">Test Prep</span><span class="info-val empty" id="prev-prep">—</span></div>
+          <div class="info-row"><span class="info-key">Reading</span><span class="info-val empty" id="prev-read">—</span></div>
+          <div class="info-row"><span class="info-key">Writing</span><span class="info-val empty" id="prev-write">—</span></div>
+        </div>
+
+        <!-- Tip -->
+        <div class="tip-card">
+          <strong>💡 Model insight:</strong> Students who complete a test prep course and have standard lunch tend to score significantly higher on average.
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Live preview updater
+    function updatePreview() {
+      const get = id => document.getElementById(id);
+      const set = (id, val, fallback='—') => {
+        const el = document.getElementById(id);
+        el.textContent = val || fallback;
+        el.classList.toggle('empty', !val);
+      };
+      set('prev-gender', get('gender').value);
+      set('prev-race', get('race_ethnicity').value);
+      set('prev-edu', get('parental_level_of_education').value);
+      set('prev-lunch', get('lunch').value);
+      set('prev-prep', get('test_preparation_course').value === 'completed' ? 'Completed ✓' : get('test_preparation_course').value === 'none' ? 'Not taken' : '');
+      const r = get('reading_score').value;
+      const w = get('writing_score').value;
+      set('prev-read', r ? r + ' / 100' : '');
+      set('prev-write', w ? w + ' / 100' : '');
+    }
+
+    // Animate gauge on page load if result is present
+    window.addEventListener('load', () => {
+      const scoreEl = document.getElementById('gaugeNum');
+      const fill = document.getElementById('gaugeFill');
+      const score = parseFloat(scoreEl.textContent);
+      if (!isNaN(score)) {
+        const circumference = 440;
+        const offset = circumference - (score / 100) * circumference;
+        // small delay so transition fires
+        setTimeout(() => { fill.style.strokeDashoffset = offset; }, 200);
+      }
+
+      // Also populate preview from form if form has values (on re-render)
+      updatePreview();
+    });
+  </script>
+
+</body>
+</html>
